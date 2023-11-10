@@ -1,63 +1,118 @@
-import requests, json,time
+import requests,json,time,validators
+from art import tprint,text2art
 
-domain = input("URL: ")
+#Tool Banner
+def tprint(text):
+    t = text2art(text)
+    print(t)
 
-headers = {'API-Key':'ff07f9c4-f296-4104-8264-47f0a8504e41',
-        'Content-Type':'application/json'}
-data = {"url": domain, 
-        "visibility": "public"}
-response = requests.post('https://urlscan.io/api/v1/scan/',headers=headers, 
-        data=json.dumps(data))
+def get_valid_url():
+    while True:
+        url = input("URL: ")
+        if validators.url(url):
+            return url
+        else:
+            print("Invalid URL. Please enter a valid URL.")
 
-# Check if the request was successful
-if response.status_code == 200:  
-    # Parse the JSON response
-    response_data = response.json()
+def connection_request(url):
+    try:
+        headers = {
+            'API-Key': 'ff07f9c4-f296-4104-8264-47f0a8504e41',
+            'Content-Type': 'application/json'
+        }
 
-    # Access a specific key within the response JSON
-    # For example, if 'task' is a key in the response:
-    if 'api' in response_data:
-        api_link = response_data['api']
+        data = {"url": url, "visibility": "public"}
 
-     # Delay in request to load
-        countdown = 15
-
-        while countdown > 0:
-                print(f"\rCRAWLING {domain} ", end="", flush=True)
-                time.sleep(1)
-                countdown -= 1
-
-     # Fetch the result using the 'api' link
-        api_result = requests.get(api_link)
+        response = requests.post('https://urlscan.io/api/v1/scan/',
+                                 headers=headers,
+                                 data=json.dumps(data))
         
+    except requests.exceptions.RequestException as e:
+        print(f"Error during establishing connection")
+        return None
 
-        # Feching links on website
-        if api_result.status_code == 200:
-            # Access the content of the response
-            data_att = api_result.json()['data']
+    return response
 
-            if  0 < len(data_att['links']):
-                
-                print("\n----LINKS FOUND ON WEBSITE---\n")
-                for i in data_att['links']:
-                        print(f'-> {i['href']}')
+def crawl_website(api_link):
+    countdown = 15
 
-        # Fetching tech the website built with
-        meta_att = api_result.json()['meta']
-        print("\n---WEBSITE BUILT WITH---\n")
-        for i in meta_att['processors']['wappa']['data']:
-             print(i['app'])
+    while countdown > 0:
+        print(f"\rCRAWLING {url} ", end="", flush=True)
+        time.sleep(1)
+        countdown -= 1
 
-        # Fetching server details
-        page_att = api_result.json()['page']
-        print("\n---WEBSITE DETAILS---\n")
-        print(page_att['domain'])
-        print(page_att['server'])
-        print(page_att['ip'])
-        print(page_att['asn'])
-        print(page_att['asnname'])
+    api_result = requests.get(api_link)
+    return api_result
+
+def print_links(links):
+    try:
+        if len(links) > 0:
+            print("\n----LINKS FOUND ON WEBSITE---\n")
+            for link in links:
+                href_value = link.get("href", "Unknown Href")
+                print(f'-> {href_value}')
+
+    except (TypeError, KeyError) as e:
+        print(f"Key or Type error while accessing links")
+
+def print_website_tech(meta_att):
+    print("\n---WEBSITE BUILT WITH---\n")
+
+    try:
+        processors_data = meta_att.get('processors', {}).get('wappa', {}).get('data', [])
+
+        for item in processors_data:
+            app_name = item.get('app', 'Error encountered while retriving data')
+            print(app_name)
+
+    except (KeyError, TypeError):
+        print("Error: Key not found in response!")
+
+
+def print_website_details(page_att):
+    print("\n---WEBSITE DETAILS---\n")
+
+    keys_to_print = ['domain', 'server', 'ip', 'asn', 'asnname']
+
+    for key in keys_to_print:
+        value = page_att.get(key, f"Unknown {key.capitalize()}")
+        print(f"{key.capitalize()}: {value}")
+
+
+if __name__ == "__main__":
+    tprint('FINDZ')
+    print('\tv1.0')
+    print('\tBy incoggeek')
+
+    url = get_valid_url()
+
+    requests_data = connection_request(url)
+
+    # Check if the request was successful
+    if requests_data and requests_data.status_code == 200:
+        # Parse the JSON response
+        response_data = requests_data.json()
+
+        # Access a specific key within the response JSON
+        if 'api' in response_data:
+            api_link = response_data['api']
+            api_result = crawl_website(api_link)
+
+            # Fetching links on the website
+            if api_result.status_code == 200:
+                data_att = api_result.json()['data']
+                print_links(data_att['links'])
+
+                # Fetching technology the website is built with
+                meta_att = api_result.json()['meta']
+                print_website_tech(meta_att)
+
+                # Fetching server details
+                page_att = api_result.json()['page']
+                print_website_details(page_att)
+
+            else:
+                print('Request was not successful')
 
     else:
-        print("Key 'api' not found in the response.")
-else:
-    print("Request was not successful. Status code:", response.status_code)
+        print('Something went wrong!')
