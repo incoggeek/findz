@@ -2,7 +2,7 @@
 
 ## Overview
 
-Findz is a Python tool designed for analyzing websites, fetching information about the technologies they use, and extracting links from the provided URL. It utilizes the URLScan API to perform the analysis.
+Findz is a Python tool designed for analyzing websites, fetching information about the technologies they use, and extracting links from the provided URL.
 
 ## Features
 
@@ -19,9 +19,10 @@ Findz is a Python tool designed for analyzing websites, fetching information abo
 
 ### Clone the Repository
 
+```bash
 git clone https://github.com/incoggeek/findz.git
 cd findz
-
+```
 ### Install Dependencies
 
 pip install -r requirements.txt
