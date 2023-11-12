@@ -17,7 +17,7 @@ def get_valid_url():
 def connection_request(url):
     try:
         headers = {
-            'API-Key': 'ff07f9c4-f296-4104-8264-47f0a8504e41',
+            'API-Key': 'USE_YOUR_API_KEY',
             'Content-Type': 'application/json'
         }
 
