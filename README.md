@@ -40,13 +40,13 @@ python3 findz.py
 To use the urlscan.io API, you need to obtain an API key. Follow these steps:
 
 1. **Sign Up:**
-   - Visit [urlscan.io/user/signup](https://urlscan.io/user/signup) and create a new account.
+   - Visit [Signup page](https://urlscan.io/user/signup) and create a new account.
 
 2. **Log In:**
-   - After signing up, go to [urlscan.io/user/login](https://urlscan.io/user/login/) to log in with your newly created credentials.
+   - After signing up, go to [Login page](https://urlscan.io/user/login/) to log in with your newly created credentials.
 
 3. **Access Profile:**
-   - Once logged in, navigate to your profile by visiting [urlscan.io/user/profile/](https://urlscan.io/user/profile/).
+   - Once logged in, navigate to your profile by visiting [Profile page](https://urlscan.io/user/profile/).
 
 4. **Find API Key:**
    - In your profile, look for the section Setting & API key.
