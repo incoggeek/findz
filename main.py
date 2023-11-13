@@ -115,4 +115,4 @@ if __name__ == "__main__":
                 print('Request was not successful')
 
     else:
-        print('Something went wrong!')
+        print("Unable to make request, Probably API key missing!")
