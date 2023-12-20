@@ -1,4 +1,4 @@
-# Findz
+# Findz 🔎
 
 ## Overview
 
